@@ -65,6 +65,7 @@ void vCommandConsoleTask(void *pvParameters)
     static uint8_t pcEscapeCodePos = 0;
 
     // Any semaphores/mutexes/etc you needed to be initialized, you can do them here
+	xSemaphoreCreateBinary(xSemaphoreChar);
 
     /* This code assumes the peripheral being used as the console has already
     been opened and configured, and is passed into the task as the task
@@ -217,7 +218,15 @@ void vCommandConsoleTask(void *pvParameters)
 static void FreeRTOS_read(char *character)
 {
     // ToDo: Complete this function
-    vTaskSuspend(NULL); // We suspend ourselves. Please remove this when doing your code
+	xSemaphoreTake(xSemaphoreChar, 10);
+	
+	int r = circular_buf_get(cbufRx, (uint8_t *) character);
+	if (r==0){
+		//here buffer is not empty. execute wtv function we want
+	}
+	else{
+		
+	}
 }
 
 /******************************************************************************
