@@ -10,6 +10,8 @@
  * Includes
  ******************************************************************************/
 #include "CliThread.h"
+#include "semphr.h"
+#include <stdio.h>
 
 /******************************************************************************
  * Defines
@@ -21,6 +23,8 @@
 static int8_t *const pcWelcomeMessage =
     "FreeRTOS CLI.\r\nType Help to view a list of registered commands.\r\n";
 
+SemaphoreHandle_t xSemaphoreChar;
+SemaphoreHandle_t xSemaphoreCountChar;
 // Clear screen command
 const CLI_Command_Definition_t xClearScreen =
     {
@@ -35,6 +39,22 @@ static const CLI_Command_Definition_t xResetCommand =
         "reset: Resets the device\r\n",
         (const pdCOMMAND_LINE_CALLBACK)CLI_ResetDevice,
         0};
+
+
+static const CLI_Command_Definition_t xVersionCommand =
+{
+	"version",
+	"version: Prints the firmware version\r\n",
+	(const pdCOMMAND_LINE_CALLBACK)CliPrintVersion,
+0};
+
+
+static const CLI_Command_Definition_t xTicksCommand =
+{
+	"ticks",
+	"ticks: Prints out number of ticks since Scheduler started\r\n",
+	(const pdCOMMAND_LINE_CALLBACK)CliTicksPrint,
+0};
 
 /******************************************************************************
  * Forward Declarations
@@ -54,6 +74,8 @@ void vCommandConsoleTask(void *pvParameters)
 
     FreeRTOS_CLIRegisterCommand(&xClearScreen);
     FreeRTOS_CLIRegisterCommand(&xResetCommand);
+	FreeRTOS_CLIRegisterCommand(&xVersionCommand);
+	FreeRTOS_CLIRegisterCommand(&xTicksCommand);
 
     uint8_t cRxedChar[2], cInputIndex = 0;
     BaseType_t xMoreDataToFollow;
@@ -65,7 +87,9 @@ void vCommandConsoleTask(void *pvParameters)
     static uint8_t pcEscapeCodePos = 0;
 
     // Any semaphores/mutexes/etc you needed to be initialized, you can do them here
-	xSemaphoreCreateBinary(xSemaphoreChar);
+	//xSemaphoreCountChar = xSemaphoreCreateBinary();
+	xSemaphoreCountChar = xSemaphoreCreateCounting(SEMAPHORE_MAX,SEMAPHORE_INIT);
+	
 
     /* This code assumes the peripheral being used as the console has already
     been opened and configured, and is passed into the task as the task
@@ -218,16 +242,29 @@ void vCommandConsoleTask(void *pvParameters)
 static void FreeRTOS_read(char *character)
 {
     // ToDo: Complete this function
-	xSemaphoreTake(xSemaphoreChar, 10);
 	
-	int r = circular_buf_get(cbufRx, (uint8_t *) character);
-	if (r==0){
-		//here buffer is not empty. execute wtv function we want
-	}
-	else{
+	
+	xSemaphoreTake(xSemaphoreCountChar, portMAX_DELAY);
+	int r = SerialConsoleReadCharacter((uint8_t *)character);
+	
+	//circular_buf_get(cbufRx, (uint8_t *)character);
+	
+	while(r==-1){
+		//xSemaphoreTake(xSemaphoreCountChar, portMAX_DELAY);
+		r = SerialConsoleReadCharacter((uint8_t *)character); 
+		//circular_buf_get(cbufRx, (uint8_t *)character);
 		
 	}
+	
+	//xSemaphoreGive(xSemaphoreCountChar)
+
 }
+
+//void CLI_GiveFromISR(void){
+	//static BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+	//xSemaphoreGiveFromISR(xSemaphoreCountChar,&pxHigherPriorityTaskWoken);
+	//portYIELD_FROM_ISR(pxHigherPriorityTaskWoken);
+//}
 
 /******************************************************************************
  * CLI Functions - Define here
@@ -236,11 +273,13 @@ static void FreeRTOS_read(char *character)
 // THIS COMMAND USES vt100 TERMINAL COMMANDS TO CLEAR THE SCREEN ON A TERMINAL PROGRAM LIKE TERA TERM
 // SEE http://www.csie.ntu.edu.tw/~r92094/c++/VT100.html for more info
 // CLI SPECIFIC COMMANDS
-static char bufCli[CLI_MSG_LEN];
+static char bufCli[MAX_INPUT_LENGTH_CLI];
 BaseType_t xCliClearTerminalScreen(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
     char clearScreen = ASCII_ESC;
     snprintf(bufCli, CLI_MSG_LEN - 1, "%c[2J", clearScreen);
+	//
+	//
     snprintf(pcWriteBuffer, xWriteBufferLen, bufCli);
     return pdFALSE;
 }
@@ -250,4 +289,32 @@ BaseType_t CLI_ResetDevice(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const 
 {
     system_reset();
     return pdFALSE;
+}
+
+/*Review how the commands “xClearScreen” or “xResetCommand” are implemented in “CliThread.c”. Based on how these work, implement the following CLI commands:
+
+version
+Prints a firmware version, such as “0.0.1”. Make sure that the version string inputs can be modified by changing a #define at the beginning of a file.
+*/
+BaseType_t CliPrintVersion(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	//char buffer[MAX_BUFFER_LENGTH];
+	int fw_ver = FIRMWARE_VERSION;
+	int fw_subver = FIRMWARE_SUBVERSION;
+	int fw_subsubver = FIRMWARE_SUBSUBVERSION;
+	snprintf(bufCli, MAX_INPUT_LENGTH_CLI-1, "Firmware version: %d.%d.%d", fw_ver,fw_subver,fw_subsubver);
+	snprintf(pcWriteBuffer, xWriteBufferLen, bufCli);
+	return pdFALSE;
+}
+/*
+ticks
+Prints the number of ticks since the scheduler was started (vTaskStartScheduler). This might look like “12329”.
+*/
+BaseType_t CliTicksPrint(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	UBaseType_t count = xTaskGetTickCount();
+	char buffer[MAX_BUFFER_LENGTH];
+	snprintf(bufCli, CLI_MSG_LEN - 1, "%lu", count);
+	snprintf(pcWriteBuffer, xWriteBufferLen, bufCli);
+	return pdFALSE;
 }

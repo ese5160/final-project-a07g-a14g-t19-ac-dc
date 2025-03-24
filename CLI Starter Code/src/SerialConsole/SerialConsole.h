@@ -50,6 +50,9 @@
 /******************************************************************************
 * Global Function Declarations
 ******************************************************************************/
+static cbuf_handle_t cbufRx; ///< Circular buffer handler for receiving characters
+static cbuf_handle_t cbufTx; ///< Circular buffer handler for transmitting characters
+
 /**
  * @fn			void InitializeSerialConsole(void)
  * @brief		Initializes the UART - sets up the SERCOM to act as UART and registers the callbacks for

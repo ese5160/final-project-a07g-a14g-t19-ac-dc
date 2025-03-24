@@ -32,6 +32,7 @@
  * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
 #include <asf.h>
+#include <stdio.h>
 #include "SerialConsole/SerialConsole.h"
 #include "CliThread.h"
 /******************************************************************************

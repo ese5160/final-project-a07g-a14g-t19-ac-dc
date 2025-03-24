@@ -11,7 +11,7 @@
 #include "asf.h"
 #include "SerialConsole.h"
 #include "FreeRTOS_CLI.h"
-
+#include "semphr.h"
 
 #define CLI_TASK_SIZE	256		///<STUDENT FILL
 #define CLI_PRIORITY (configMAX_PRIORITIES - 1) ///<STUDENT FILL
@@ -30,7 +30,16 @@
 #define ASCII_WHITESPACE				0x20
 #define ASCII_ESC						27
 
+//#defines for the cli print version function
+#define FIRMWARE_VERSION                0
+#define FIRMWARE_SUBVERSION				0
+#define FIRMWARE_SUBSUBVERSION			1
+#define ASCII_FULLSTOP					0x2E
+static UBaseType_t SEMAPHORE_MAX=512;
+static UBaseType_t SEMAPHORE_INIT=0;
 
+//#defines for the ticks print function
+#define MAX_BUFFER_LENGTH				512
 BaseType_t xCliClearTerminalScreen( char *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 
 #define	CLI_COMMAND_CLEAR_SCREEN		"cls"
@@ -40,8 +49,11 @@ BaseType_t xCliClearTerminalScreen( char *pcWriteBuffer,size_t xWriteBufferLen,c
 
 
 void vCommandConsoleTask( void *pvParameters );
+//void CLI_GiveFromISR(void);
 
 extern SemaphoreHandle_t xSemaphoreChar;
+extern SemaphoreHandle_t xSemaphoreCountChar;
+//extern cbuf_handle_t cbufRx;
 
 BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 BaseType_t CLI_OTAU( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
@@ -50,3 +62,5 @@ BaseType_t CLI_NeotrellProcessButtonBuffer( int8_t *pcWriteBuffer,size_t xWriteB
 BaseType_t CLI_DistanceSensorGetDistance( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 BaseType_t CLI_ResetDevice( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 BaseType_t CLI_SendDummyGameData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
+BaseType_t CliTicksPrint(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+BaseType_t CliPrintVersion(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);

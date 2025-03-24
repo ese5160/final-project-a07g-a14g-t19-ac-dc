@@ -27,7 +27,8 @@
  * Includes
  ******************************************************************************/
 #include "SerialConsole.h"
-#include "CliThread.c"
+#include "CliThread.h"
+//#include "semphr.h"
 
 /******************************************************************************
  * Defines
@@ -38,8 +39,8 @@
 /******************************************************************************
  * Structures and Enumerations
  ******************************************************************************/
-cbuf_handle_t cbufRx; ///< Circular buffer handler for receiving characters
-cbuf_handle_t cbufTx; ///< Circular buffer handler for transmitting characters
+//cbuf_handle_t cbufRx; ///< Circular buffer handler for receiving characters
+//cbuf_handle_t cbufTx; ///< Circular buffer handler for transmitting characters
 
 char latestRx; ///< Holds the latest character received
 char latestTx; ///< Holds the latest character to be transmitted
@@ -63,7 +64,8 @@ struct usart_module usart_instance;
 char rxCharacterBuffer[RX_BUFFER_SIZE]; 			   ///< Buffer to store received characters
 char txCharacterBuffer[TX_BUFFER_SIZE]; 			   ///< Buffer to store characters to be sent
 enum eDebugLogLevels currentDebugLevel = LOG_INFO_LVL; ///< Default debug level
-
+//SemaphoreHandle_t xSemaphoreChar;
+//SemaphoreHandle_t xSemaphoreCountChar;
 /******************************************************************************
  * Global Functions
  ******************************************************************************/
@@ -160,7 +162,7 @@ void LogMessage(enum eDebugLogLevels level, const char *format, ...)
 	va_start(msg_string,format);
 	if(curr_level <= level){
 		vsprintf(logger_buffer,format,msg_string);
-		SerialConsoleWriteString(format);
+		SerialConsoleWriteString(logger_buffer);
 	};
 }
 
@@ -230,10 +232,16 @@ static void configure_usart_callbacks(void)
 void usart_read_callback(struct usart_module *const usart_module)
 {
 	// ToDo: Complete this function
-	if (circular_buf_put2(cbufRx, (uint8_t *)&latestRx) != -1) {
-		usart_read_buffer_job(&usart_instance, (uint8_t *)&latestTx, 1);
-	}
-	xSemaphoreGive(xSemaphoreChar); 
+	
+	//while (circular_buf_put2(cbufRx, (uint8_t *)&latestRx) != -1) {
+		//usart_read_buffer_job(&usart_instance, (uint8_t *)&latestRx, 1);
+	//}
+	circular_buf_put(cbufRx, (uint8_t)latestRx);
+	usart_read_buffer_job(&usart_instance, (uint8_t *)&latestRx, 1);
+	static BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+	xSemaphoreGiveFromISR(xSemaphoreCountChar,&pxHigherPriorityTaskWoken); 
+	portYIELD_FROM_ISR(pxHigherPriorityTaskWoken);
+	//CLI_GiveFromISR();
 }
 
 /**************************************************************************/ 
