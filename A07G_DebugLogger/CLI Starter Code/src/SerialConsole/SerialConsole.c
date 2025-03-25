@@ -159,7 +159,7 @@ void LogMessage(enum eDebugLogLevels level, const char *format, ...)
 	va_start(msg_string,format);
 	if(curr_level <= level){
 		vsprintf(logger_buffer,format,msg_string);
-		SerialConsoleWriteString(format);
+		SerialConsoleWriteString(logger_buffer);
 	};
 	
 	
