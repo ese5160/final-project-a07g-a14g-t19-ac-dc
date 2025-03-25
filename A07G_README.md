@@ -4,7 +4,7 @@
 * Team Name: AC-DC
 * Team Members: Madison Hughes and Aditya Rangamani
 * GitHub Repository URL: https://github.com/ese5160/final-project-a07g-a14g-t19-ac-dc.git
-* Description of test hardware: (development boards, sensors, actuators, laptop + OS, etc)
+* Description of test hardware: (development boards, sensors, actuators, laptop + OS, etc) SAMW25, Saelae Logic 8, Laptop+Windows, Microchip Studio, PuTTY
 
 ## Software Architecture
 
@@ -13,46 +13,46 @@
 HRS 01 - SAMW25 shall be our main microcontroller for all processing. The SAMD21 will be our microcontroller and the WINC1500 WiFi
  chip will facilitate all of our WiFi connections.
 
-HRS 03 - INA219 or equivalent voltage sensor shall be used  to measure the voltage of the battery pack via I2C with an accuracy of
+HRS 02 - INA219 or equivalent voltage sensor shall be used  to measure the voltage of the battery pack via I2C with an accuracy of
 +/- 0.1V
 
-HRS 05 - Adafruit 2941 servo motor or equivalent shall be used to rotate the solar panel fixed onto the gimbal. It shall move 180
+HRS 03 - Adafruit 2941 servo motor or equivalent shall be used to rotate the solar panel fixed onto the gimbal. It shall move 180
 degrees laterally and longitudinally.
 
-HRS 06 - L9110S motor driver or equivalent shall be used for driving the DC motor.
+HRS 04 - L9110S motor driver or equivalent shall be used for driving the DC motor.
 
-HRS 07 - Miniature 3.3V Cooling Fan with Molex PicoBlade Connector for cooling of the battery pack when it overheats.
+HRS 05 - Miniature 3.3V Cooling Fan with Molex PicoBlade Connector for cooling of the battery pack when it overheats.
 
-HRS 09 - Kitronik SOLAR PANEL Model NO: PG-120X62-001 or equivalent solar panel shall be used to charge the battery pack.
+HRS 06 - Kitronik SOLAR PANEL Model NO: PG-120X62-001 or equivalent solar panel shall be used to charge the battery pack.
 
-HRS 10 - Four photodiodes shall be used to detect the intensity of the light being shined on the solar panel. The angles for the dual axis rotation will be calculated using the irradiance on each of the four photodiodes, two for each axis.
+HRS 07 - Four photodiodes shall be used to detect the intensity of the light being shined on the solar panel. The angles for the dual axis rotation will be calculated using the irradiance on each of the four photodiodes, two for each axis.
 
-HRS 12 - A 3.7V Li-Ion battery shall be the main battery that will be monitored. It will be used to power the DC motor via a
+HRS 08 - A 3.7V Li-Ion battery shall be the main battery that will be monitored. It will be used to power the DC motor via a
 motor driver.
 
-HRS 13 - A 3.7V Li-Ion battery shall be used to power the SAMW25 microcontroller and all sensors.
+HRS 09 - A 3.7V Li-Ion battery shall be used to power the SAMW25 microcontroller and all sensors.
 
 ## Software Requirements Specification (SRS)
 
 SRS 01 - NTC Thermistor to monitor the temperature through BQ2410. We have set the threshold temperature for 45C.
 
-SRS 03 - INA219 or equivalent voltage sensor shall send data over I2C to the microcontroller once per 0.5 seconds +/- 100
+SRS 02 - INA219 or equivalent voltage sensor shall send data over I2C to the microcontroller once per 0.5 seconds +/- 100
 milliseconds.
 
-SRS 06 - All sensor data shall be sent to the user interface from the SAMW25 microcontroller using WiFi, updating once per
+SRS 03 - All sensor data shall be sent to the user interface from the SAMW25 microcontroller using WiFi, updating once per
 0.5 seconds +/- 100 milliseconds.
 
-SRS 07 - The light intensity from the photodiodes shall be sent and interpreted by the SAMW25 microcontroller updating every 100
+SRS 04 - The light intensity from the photodiodes shall be sent and interpreted by the SAMW25 microcontroller updating every 100
 milliseconds +/- 10 milliseconds.
 
-SRS 08 - The light intensity data shall be used in a feedback loop to correct the position of the solar panel toward a higher
+SRS 05 - The light intensity data shall be used in a feedback loop to correct the position of the solar panel toward a higher
  intensity of light every 100 milliseconds coinciding with the collection of new data.
 
-SRS 09 - L9110S motor driver shall be used for driving the DC motor through user input.
+SRS 06 - L9110S motor driver shall be used for driving the DC motor through user input.
 
-SRS 10 - The voltage, temperature and current state of the battery will be sent to the user and displayed on a webpage for analytics via WiFi module.
+SRS 07 - The voltage, temperature and current state of the battery will be sent to the user and displayed on a webpage for analytics via WiFi module.
 
-The broad system diagram for the 2nd question is attached below.
+2. The broad system diagram for the 2nd question is attached below.
 
 2. ![Alt text](System_flowchart.png)
 3. I have split the entire system into 5 tasks which I have listed below
@@ -64,50 +64,6 @@ The broad system diagram for the 2nd question is attached below.
    ![Alt text](State_of_charge_task.png)
 
    ![Alt text](charging_task.png)
-
-## Hardware Requirements Specification (HRS)
-
-HRS 01 - SAMW25 shall be our main microcontroller for all processing. The SAMD21 will be our microcontroller and the WINC1500 WiFi
- chip will facilitate all of our WiFi connections.
-
-HRS 03 - INA219 or equivalent voltage sensor shall be used  to measure the voltage of the battery pack via I2C with an accuracy of
-+/- 0.1V
-
-HRS 05 - Adafruit 2941 servo motor or equivalent shall be used to rotate the solar panel fixed onto the gimbal. It shall move 180
-degrees laterally and longitudinally.
-
-HRS 06 - L9110S motor driver or equivalent shall be used for driving the DC motor.
-
-HRS 07 - Miniature 3.3V Cooling Fan with Molex PicoBlade Connector for cooling of the battery pack when it overheats.
-
-HRS 09 - Kitronik SOLAR PANEL Model NO: PG-120X62-001 or equivalent solar panel shall be used to charge the battery pack.
-
-HRS 10 - Four photodiodes shall be used to detect the intensity of the light being shined on the solar panel. The angles for the dual axis rotation will be calculated using the irradiance on each of the four photodiodes, two for each axis.
-
-HRS 12 - A 3.7V Li-Ion battery shall be the main battery that will be monitored. It will be used to power the DC motor via a
-motor driver.
-
-HRS 13 - A 3.7V Li-Ion battery shall be used to power the SAMW25 microcontroller and all sensors.
-
-## Software Requirements Specification (SRS)
-
-SRS 01 - NTC Thermistor to monitor the temperature through BQ2410. We have set the threshold temperature for 45C.
-
-SRS 03 - INA219 or equivalent voltage sensor shall send data over I2C to the microcontroller once per 0.5 seconds +/- 100
-milliseconds.
-
-SRS 06 - All sensor data shall be sent to the user interface from the SAMW25 microcontroller using WiFi, updating once per
-0.5 seconds +/- 100 milliseconds.
-
-SRS 07 - The light intensity from the photodiodes shall be sent and interpreted by the SAMW25 microcontroller updating every 100
-milliseconds +/- 10 milliseconds.
-
-SRS 08 - The light intensity data shall be used in a feedback loop to correct the position of the solar panel toward a higher
- intensity of light every 100 milliseconds coinciding with the collection of new data.
-
-SRS 09 - L9110S motor driver shall be used for driving the DC motor through user input.
-
-SRS 10 - The voltage, temperature and current state of the battery will be sent to the user and displayed on a webpage for analytics via WiFi module.
 
 ### Understanding the Starter Code
 
@@ -168,6 +124,8 @@ Video link: https://drive.google.com/file/d/1xVz9SYXsYTk-hGG72L9eMZwvI8QJIvLB/vi
 ![Alt text](Logic_Analyzer.png)
 
 The .sal file is linked here:A07G_Part4.sal
+
+The pin connections image is linked here: https://drive.google.com/file/d/1xljPfFQxiu_bJ8iVIRrknJKNnz5zdSSe/view?usp=drive_link
 
 ## Add CLI commands
 
