@@ -6,6 +6,19 @@
 * GitHub Repository URL: https://github.com/ese5160/final-project-a07g-a14g-t19-ac-dc.git
 * Description of test hardware: (development boards, sensors, actuators, laptop + OS, etc)
 
+
+## Software Architecture
+
+3. I have split the entire system into 5 tasks which I have listed below
+
+   ![Alt text](photodiode_task.png)![Alt text](DC_motor_task.png)
+
+   ![Alt text](temperature_task.png)
+
+   ![Alt text](State_of_charge_task.png)
+
+   ![Alt text](charging_task.png)
+
 ### Understanding the Starter Code
 
 1. What does “InitializeSerialConsole()” do? In said function, what is “cbufRx” and “cbufTx”? What type of data structure is it?
@@ -54,6 +67,9 @@
 
 Video link: https://drive.google.com/file/d/1xVz9SYXsYTk-hGG72L9eMZwvI8QJIvLB/view?usp=drive_link
 
+### Logic Analyzer screenshot
+
+![Alt text](Logic_Analyzer.png)
 
 ## Add CLI commands
 
