@@ -147,7 +147,12 @@ void setLogLevel(enum eDebugLogLevels debugLevel)
 }
 
 /**
- * @brief Logs a message at the specified debug level.
+ * @fn         void LogMessage(enum eDebugLogLevels level, const char *format, ...)
+ * @brief      Logs a formatted message at the specified debug level.
+ * This function checks the current debug level and logs the message
+ * if the provided level is within the allowed threshold. 
+ *
+ * @note
  */
 void LogMessage(enum eDebugLogLevels level, const char *format, ...)
 {

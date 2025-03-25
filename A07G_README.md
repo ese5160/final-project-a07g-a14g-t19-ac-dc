@@ -9,6 +9,55 @@
 
 ## Software Architecture
 
+
+## Hardware Requirements Specification (HRS)
+
+HRS 01 - SAMW25 shall be our main microcontroller for all processing. The SAMD21 will be our microcontroller and the WINC1500 WiFi
+ chip will facilitate all of our WiFi connections.
+
+HRS 03 - INA219 or equivalent voltage sensor shall be used  to measure the voltage of the battery pack via I2C with an accuracy of
++/- 0.1V
+
+HRS 05 - Adafruit 2941 servo motor or equivalent shall be used to rotate the solar panel fixed onto the gimbal. It shall move 180
+degrees laterally and longitudinally.
+
+HRS 06 - L9110S motor driver or equivalent shall be used for driving the DC motor.
+
+HRS 07 - Miniature 3.3V Cooling Fan with Molex PicoBlade Connector for cooling of the battery pack when it overheats.
+
+HRS 09 - Kitronik SOLAR PANEL Model NO: PG-120X62-001 or equivalent solar panel shall be used to charge the battery pack.
+
+HRS 10 - Four photodiodes shall be used to detect the intensity of the light being shined on the solar panel. The angles for the dual axis rotation will be calculated using the irradiance on each of the four photodiodes, two for each axis.
+
+HRS 12 - A 3.7V Li-Ion battery shall be the main battery that will be monitored. It will be used to power the DC motor via a
+motor driver.
+
+HRS 13 - A 3.7V Li-Ion battery shall be used to power the SAMW25 microcontroller and all sensors.
+
+## Software Requirements Specification (SRS)
+
+SRS 01 - NTC Thermistor to monitor the temperature through BQ2410. We have set the threshold temperature for 45C.
+
+SRS 03 - INA219 or equivalent voltage sensor shall send data over I2C to the microcontroller once per 0.5 seconds +/- 100
+milliseconds.
+
+SRS 06 - All sensor data shall be sent to the user interface from the SAMW25 microcontroller using WiFi, updating once per
+0.5 seconds +/- 100 milliseconds.
+
+SRS 07 - The light intensity from the photodiodes shall be sent and interpreted by the SAMW25 microcontroller updating every 100
+milliseconds +/- 10 milliseconds.
+
+SRS 08 - The light intensity data shall be used in a feedback loop to correct the position of the solar panel toward a higher
+ intensity of light every 100 milliseconds coinciding with the collection of new data.
+
+SRS 09 - L9110S motor driver shall be used for driving the DC motor through user input.
+
+SRS 10 - The voltage, temperature and current state of the battery will be sent to the user and displayed on a webpage for analytics via WiFi module.
+
+The broad system diagram for the 2nd question is attached below.
+
+2. ![Alt text](System_flowchart.png)
+
 3. I have split the entire system into 5 tasks which I have listed below
 
    ![Alt text](photodiode_task.png)![Alt text](DC_motor_task.png)
@@ -18,6 +67,51 @@
    ![Alt text](State_of_charge_task.png)
 
    ![Alt text](charging_task.png)
+
+## Hardware Requirements Specification (HRS)
+
+
+HRS 01 - SAMW25 shall be our main microcontroller for all processing. The SAMD21 will be our microcontroller and the WINC1500 WiFi
+ chip will facilitate all of our WiFi connections.
+
+HRS 03 - INA219 or equivalent voltage sensor shall be used  to measure the voltage of the battery pack via I2C with an accuracy of
++/- 0.1V
+
+HRS 05 - Adafruit 2941 servo motor or equivalent shall be used to rotate the solar panel fixed onto the gimbal. It shall move 180
+degrees laterally and longitudinally.
+
+HRS 06 - L9110S motor driver or equivalent shall be used for driving the DC motor.
+
+HRS 07 - Miniature 3.3V Cooling Fan with Molex PicoBlade Connector for cooling of the battery pack when it overheats.
+
+HRS 09 - Kitronik SOLAR PANEL Model NO: PG-120X62-001 or equivalent solar panel shall be used to charge the battery pack.
+
+HRS 10 - Four photodiodes shall be used to detect the intensity of the light being shined on the solar panel. The angles for the dual axis rotation will be calculated using the irradiance on each of the four photodiodes, two for each axis.
+
+HRS 12 - A 3.7V Li-Ion battery shall be the main battery that will be monitored. It will be used to power the DC motor via a
+motor driver.
+
+HRS 13 - A 3.7V Li-Ion battery shall be used to power the SAMW25 microcontroller and all sensors.
+
+## Software Requirements Specification (SRS)
+
+SRS 01 - NTC Thermistor to monitor the temperature through BQ2410. We have set the threshold temperature for 45C.
+
+SRS 03 - INA219 or equivalent voltage sensor shall send data over I2C to the microcontroller once per 0.5 seconds +/- 100
+milliseconds.
+
+SRS 06 - All sensor data shall be sent to the user interface from the SAMW25 microcontroller using WiFi, updating once per
+0.5 seconds +/- 100 milliseconds.
+
+SRS 07 - The light intensity from the photodiodes shall be sent and interpreted by the SAMW25 microcontroller updating every 100
+milliseconds +/- 10 milliseconds.
+
+SRS 08 - The light intensity data shall be used in a feedback loop to correct the position of the solar panel toward a higher
+ intensity of light every 100 milliseconds coinciding with the collection of new data.
+
+SRS 09 - L9110S motor driver shall be used for driving the DC motor through user input.
+
+SRS 10 - The voltage, temperature and current state of the battery will be sent to the user and displayed on a webpage for analytics via WiFi module.
 
 ### Understanding the Starter Code
 
@@ -54,6 +148,10 @@
 
    It initializes tasks needed for the application. It first checks if there is heap size available. Then it initializes all of the tasks needed for the application. Then it creates the CLI task which is represented by vCommandConsoleTask. If it fails, it prints an error message to the serial console. Then it checks the heap memory space after the tasks have been created. There are 2+ threads created. The CLI task is created, it also creates the systme idle task. Finally, depending on how many additional tasks are created, there will be more threads than these intitial 2.
 
+## Debug Logger Module
+
+Please find the code in this file path:	final-project-a07g-a14g-t19-ac-dc\A07G_DebugLogger\CLI Starter Code\src\SerialConsole\SerialConsole.c
+
 ## Wiretap the Convo
 
 1. What nets must you attach the logic analyzer to? (Check how the firmware sets up the UART in SerialConsole.c!)
@@ -70,6 +168,8 @@ Video link: https://drive.google.com/file/d/1xVz9SYXsYTk-hGG72L9eMZwvI8QJIvLB/vi
 ### Logic Analyzer screenshot
 
 ![Alt text](Logic_Analyzer.png)
+
+The .sal file is linked here:A07G_Part4.sal
 
 ## Add CLI commands
 
