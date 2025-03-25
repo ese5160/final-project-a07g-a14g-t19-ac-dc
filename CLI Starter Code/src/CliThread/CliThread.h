@@ -49,11 +49,9 @@ BaseType_t xCliClearTerminalScreen( char *pcWriteBuffer,size_t xWriteBufferLen,c
 
 
 void vCommandConsoleTask( void *pvParameters );
-//void CLI_GiveFromISR(void);
 
-extern SemaphoreHandle_t xSemaphoreChar;
 extern SemaphoreHandle_t xSemaphoreCountChar;
-//extern cbuf_handle_t cbufRx;
+
 
 BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 BaseType_t CLI_OTAU( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );

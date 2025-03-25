@@ -150,8 +150,14 @@ void setLogLevel(enum eDebugLogLevels debugLevel)
 }
 
 /**
- * @brief Logs a message at the specified debug level.
+ * @fn         void LogMessage(enum eDebugLogLevels level, const char *format, ...)
+ * @brief      Logs a formatted message at the specified debug level.
+ * This function checks the current debug level and logs the message
+ * if the provided level is within the allowed threshold. 
+ *
+ * @note
  */
+
 void LogMessage(enum eDebugLogLevels level, const char *format, ...)
 {
     // Todo: Implement Debug Logger
@@ -233,15 +239,12 @@ void usart_read_callback(struct usart_module *const usart_module)
 {
 	// ToDo: Complete this function
 	
-	//while (circular_buf_put2(cbufRx, (uint8_t *)&latestRx) != -1) {
-		//usart_read_buffer_job(&usart_instance, (uint8_t *)&latestRx, 1);
-	//}
 	circular_buf_put(cbufRx, (uint8_t)latestRx);
 	usart_read_buffer_job(&usart_instance, (uint8_t *)&latestRx, 1);
 	static BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
 	xSemaphoreGiveFromISR(xSemaphoreCountChar,&pxHigherPriorityTaskWoken); 
 	portYIELD_FROM_ISR(pxHigherPriorityTaskWoken);
-	//CLI_GiveFromISR();
+
 }
 
 /**************************************************************************/ 

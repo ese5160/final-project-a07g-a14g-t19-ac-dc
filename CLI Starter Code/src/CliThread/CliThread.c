@@ -25,7 +25,15 @@ static int8_t *const pcWelcomeMessage =
 
 SemaphoreHandle_t xSemaphoreChar;
 SemaphoreHandle_t xSemaphoreCountChar;
-// Clear screen command
+
+/**************************************************************************/ 
+/**
+ * @fn         static const CLI_Command_Definition_t xClearScreen
+ * @brief      Command definition for clearing the screen.
+ * This command is registered in the CLI to clear the terminal screen when executed.
+ *
+ * @note 
+ *****************************************************************************/
 const CLI_Command_Definition_t xClearScreen =
     {
         CLI_COMMAND_CLEAR_SCREEN,
@@ -33,6 +41,14 @@ const CLI_Command_Definition_t xClearScreen =
         CLI_CALLBACK_CLEAR_SCREEN,
         CLI_PARAMS_CLEAR_SCREEN};
 
+/**************************************************************************/ 
+/**
+ * @fn         static const CLI_Command_Definition_t xResetCommand
+ * @brief      Command definition for resetting the device.
+ * This command triggers a system reset when executed in the CLI.
+ *
+ * @note       
+ *****************************************************************************/
 static const CLI_Command_Definition_t xResetCommand =
     {
         "reset",
@@ -41,6 +57,14 @@ static const CLI_Command_Definition_t xResetCommand =
         0};
 
 
+/**************************************************************************/ 
+/**
+ * @fn         static const CLI_Command_Definition_t xVersionCommand
+ * @brief      Command definition for displaying the firmware version.
+ * This command prints the firmware version when executed in the CLI.
+ *
+ * @note  
+ *****************************************************************************/
 static const CLI_Command_Definition_t xVersionCommand =
 {
 	"version",
@@ -48,7 +72,14 @@ static const CLI_Command_Definition_t xVersionCommand =
 	(const pdCOMMAND_LINE_CALLBACK)CliPrintVersion,
 0};
 
-
+/**************************************************************************/ 
+/**
+ * @fn         static const CLI_Command_Definition_t xTicksCommand
+ * @brief      Command definition for displaying the system tick count.
+ * This command prints the number of system ticks since the FreeRTOS scheduler started.
+ *
+ * @note       
+ *****************************************************************************/
 static const CLI_Command_Definition_t xTicksCommand =
 {
 	"ticks",
@@ -87,7 +118,6 @@ void vCommandConsoleTask(void *pvParameters)
     static uint8_t pcEscapeCodePos = 0;
 
     // Any semaphores/mutexes/etc you needed to be initialized, you can do them here
-	//xSemaphoreCountChar = xSemaphoreCreateBinary();
 	xSemaphoreCountChar = xSemaphoreCreateCounting(SEMAPHORE_MAX,SEMAPHORE_INIT);
 	
 
@@ -232,39 +262,27 @@ void vCommandConsoleTask(void *pvParameters)
     }
 }
 
-/**************************************************************************/ /**
- * @fn			void FreeRTOS_read(char* character)
- * @brief		STUDENTS TO COMPLETE. This function block the thread unless we received a character. How can we do this?
-                 There are multiple solutions! Check all the inter-thread communications available! See https://www.freertos.org/a00113.html
- * @details		STUDENTS TO COMPLETE.
- * @note
+/**************************************************************************/ 
+/**
+ * @fn         static void FreeRTOS_read(char *character)
+ * @brief      Blocks the thread until a character is received.
+ * This function waits indefinitely until a character is available to read 
+ * from the serial console, ensuring synchronization using a semaphore.
+ *
+ * @note  
  *****************************************************************************/
 static void FreeRTOS_read(char *character)
 {
     // ToDo: Complete this function
-	
-	
 	xSemaphoreTake(xSemaphoreCountChar, portMAX_DELAY);
 	int r = SerialConsoleReadCharacter((uint8_t *)character);
-	
-	//circular_buf_get(cbufRx, (uint8_t *)character);
-	
 	while(r==-1){
-		//xSemaphoreTake(xSemaphoreCountChar, portMAX_DELAY);
 		r = SerialConsoleReadCharacter((uint8_t *)character); 
-		//circular_buf_get(cbufRx, (uint8_t *)character);
-		
 	}
 	
-	//xSemaphoreGive(xSemaphoreCountChar)
-
 }
 
-//void CLI_GiveFromISR(void){
-	//static BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
-	//xSemaphoreGiveFromISR(xSemaphoreCountChar,&pxHigherPriorityTaskWoken);
-	//portYIELD_FROM_ISR(pxHigherPriorityTaskWoken);
-//}
+
 
 /******************************************************************************
  * CLI Functions - Define here
@@ -291,11 +309,14 @@ BaseType_t CLI_ResetDevice(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const 
     return pdFALSE;
 }
 
-/*Review how the commands “xClearScreen” or “xResetCommand” are implemented in “CliThread.c”. Based on how these work, implement the following CLI commands:
-
-version
-Prints a firmware version, such as “0.0.1”. Make sure that the version string inputs can be modified by changing a #define at the beginning of a file.
-*/
+/**************************************************************************/ 
+/**
+ * @fn         BaseType_t CliPrintVersion(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+ * @brief      Prints the firmware version.
+ * This function retrieves the firmware version details and formats them into 
+ * a string, which is then written to the provided output buffer.
+ * @note     
+ *****************************************************************************/
 BaseType_t CliPrintVersion(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
 	//char buffer[MAX_BUFFER_LENGTH];
@@ -306,10 +327,14 @@ BaseType_t CliPrintVersion(char *pcWriteBuffer, size_t xWriteBufferLen, const in
 	snprintf(pcWriteBuffer, xWriteBufferLen, bufCli);
 	return pdFALSE;
 }
-/*
-ticks
-Prints the number of ticks since the scheduler was started (vTaskStartScheduler). This might look like “12329”.
-*/
+/**************************************************************************/ 
+/**
+ * @fn         BaseType_t CliTicksPrint(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+ * @brief      Prints the number of ticks since the FreeRTOS scheduler started.
+ * This function retrieves the system tick count using `xTaskGetTickCount()` and 
+ * writes the result as a string to the provided output buffer.
+ * @note      
+ *****************************************************************************/
 BaseType_t CliTicksPrint(char *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
 	UBaseType_t count = xTaskGetTickCount();
