@@ -6,9 +6,7 @@
 * GitHub Repository URL: https://github.com/ese5160/final-project-a07g-a14g-t19-ac-dc.git
 * Description of test hardware: (development boards, sensors, actuators, laptop + OS, etc)
 
-
 ## Software Architecture
-
 
 ## Hardware Requirements Specification (HRS)
 
@@ -57,7 +55,6 @@ SRS 10 - The voltage, temperature and current state of the battery will be sent 
 The broad system diagram for the 2nd question is attached below.
 
 2. ![Alt text](System_flowchart.png)
-
 3. I have split the entire system into 5 tasks which I have listed below
 
    ![Alt text](photodiode_task.png)![Alt text](DC_motor_task.png)
@@ -69,7 +66,6 @@ The broad system diagram for the 2nd question is attached below.
    ![Alt text](charging_task.png)
 
 ## Hardware Requirements Specification (HRS)
-
 
 HRS 01 - SAMW25 shall be our main microcontroller for all processing. The SAMD21 will be our microcontroller and the WINC1500 WiFi
  chip will facilitate all of our WiFi connections.
@@ -133,7 +129,7 @@ SRS 10 - The voltage, temperature and current state of the battery will be sent 
 
    a. A character is received? (RX)
 
-   usart_read_callnack()
+   usart_read_callback()
 
    a. A character has been sent? (TX)
 
@@ -143,10 +139,13 @@ SRS 10 - The voltage, temperature and current state of the battery will be sent 
    The usart_read_callback() gets called when all of the data has been received that was requested from a UART read and it is ready to receive another byte of data. It would get the data byte from the USART and store it in the buffer cBufRx.
    The usart_write_callback() gets called when the USART is ready for more data to be sent. This means that it gets the next amount of data that needs to be written from the cBufTx structure. If there is more data to be sent then it sends it to the USART hardware.
 7. Draw a diagram that explains the program flow for UART receive – starting with the user typing a character and ending with how that characters ends up in the circular buffer “cbufRx”. Please make reference to specific functions in the starter code.
-8. Draw a diagram that explains the program flow for the UART transmission – starting from a string added by the program to the circular buffer “cbufTx” and ending on characters being shown on the screen of a PC (On Teraterm, for example). Please make reference to specific functions in the starter code.
-9. What is done on the function “startStasks()” in main.c? How many threads are started?
 
-   It initializes tasks needed for the application. It first checks if there is heap size available. Then it initializes all of the tasks needed for the application. Then it creates the CLI task which is represented by vCommandConsoleTask. If it fails, it prints an error message to the serial console. Then it checks the heap memory space after the tasks have been created. There are 2+ threads created. The CLI task is created, it also creates the systme idle task. Finally, depending on how many additional tasks are created, there will be more threads than these intitial 2.
+   ![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXcqjZiwhZl8BmPRHRiuZPhTrwTyO23oA_i17Xt_ArxM0YroA13UEMj3s_la19J7Iay9--Qa9_3OpsrW9eLjTMWjm11GFHF-DSiseQvtP86vx9uir2EpzT6forgxp-9moR-FOvJing?key=pZvUbnNOY8zQtTcig6-ofFV2)
+8. Draw a diagram that explains the program flow for the UART transmission – starting from a string added by the program to the circular buffer “cbufTx” and ending on characters being shown on the screen of a PC (On Teraterm, for example). Please make reference to specific functions in the starter code.
+9. ![img](https://lh7-rt.googleusercontent.com/docsz/AD_4nXcopSDzUjo3qLooHIZn1NKfgddfYJWqZOiQpSM03Yj7RbmkFSBf4iS9LxK3497jZ2q8yE0yQRlTCeyR6xxaGLiq0Py97o7imiGA7mYknxYv2kG1qwS9IveP9eTHF2erLnjegywMMA?key=pZvUbnNOY8zQtTcig6-ofFV2)
+10. What is done on the function “startStasks()” in main.c? How many threads are started?
+
+    It initializes tasks needed for the application. It first checks if there is heap size available. Then it initializes all of the tasks needed for the application. Then it creates the CLI task which is represented by vCommandConsoleTask. If it fails, it prints an error message to the serial console. Then it checks the heap memory space after the tasks have been created. There are 2+ threads created. The CLI task is created, it also creates the systme idle task. Finally, depending on how many additional tasks are created, there will be more threads than these intitial 2.
 
 ## Debug Logger Module
 
@@ -161,7 +160,6 @@ Please find the code in this file path:	final-project-a07g-a14g-t19-ac-dc\A07G_D
    1. The logic analyzer needs to know the channels that are input/output, the baud rate for UART, the bit frame- number of data bits, parity bits etc. In our case the baud rate is set to 115200.
 
 ![Alt text](decoded_msg.png)
-
 
 Video link: https://drive.google.com/file/d/1xVz9SYXsYTk-hGG72L9eMZwvI8QJIvLB/view?usp=drive_link
 
